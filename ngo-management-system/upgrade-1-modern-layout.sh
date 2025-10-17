@@ -1,3 +1,20 @@
+#!/bin/bash
+# upgrade-1-modern-layout.sh
+# Modern Sidebar ve Header - Sistemi Bozmadan Upgrade
+# Date: 2025-10-17 14:34:37
+# User: ongassamaniger-blip
+
+echo "🎨 =========================================="
+echo "   MODERN SIDEBAR & HEADER UPGRADE"
+echo "   Mevcut sistem korunuyor..."
+echo "🎨 =========================================="
+
+# Backup al - Parantezli klasör için tırnak kullan
+echo "📦 Backup alınıyor..."
+cp -r "app/(main)/layout.tsx" "app/(main)/layout.tsx.backup" 2>/dev/null || true
+
+# Modern Layout Component
+cat > "app/(main)/layout.tsx" << 'EOF'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -559,3 +576,26 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     </div>
   )
 }
+EOF
+
+# Bağımlılıkları yükle
+echo ""
+echo "📦 Bağımlılıklar yükleniyor..."
+npm install framer-motion lucide-react
+
+echo ""
+echo "✅ Modern Layout başarıyla güncellendi!"
+echo ""
+echo "📝 Yapılan değişiklikler:"
+echo "  ✓ Modern collapsible sidebar"
+echo "  ✓ Header'da canlı kurlar" 
+echo "  ✓ Dark/Light mode toggle"
+echo "  ✓ Global arama (Cmd+K)"
+echo "  ✓ AI asistan butonu"
+echo "  ✓ Bildirim sistemi"
+echo "  ✓ Kullanıcı dropdown menüsü"
+echo "  ✓ Submenu desteği"
+echo "  ✓ Animasyonlar ve hover efektleri"
+echo ""
+echo "🚀 Şimdi 'npm run dev' ile test edebilirsiniz!"
+echo "📌 Sonraki adım: Dashboard modernizasyonu"
