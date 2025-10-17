@@ -1,3 +1,16 @@
+#!/bin/bash
+# upgrade-5-sacrifice-module.sh
+# Modern Sacrifice Management Module
+# Date: 2025-10-17 14:55:44
+# User: ongassamaniger-blip
+
+echo "🐑 =========================================="
+echo "   KURBAN YÖNETİMİ MODÜLÜ"
+echo "   Hisse takibi, QR kod, toplu işlemler..."
+echo "🐑 =========================================="
+
+# Sacrifice Management Page
+cat > "app/(main)/sacrifice/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -593,3 +606,7 @@ export default function SacrificePage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Kurban Yönetimi modülü tamamlandı!"
+echo "📌 Base Components paketi oluşturuluyor..."

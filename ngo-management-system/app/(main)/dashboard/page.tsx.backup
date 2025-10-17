@@ -1,0 +1,564 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  TrendingUp, Users, DollarSign, FolderOpen,
+  ArrowUpRight, ArrowDownRight, Activity, MoreVertical,
+  Calendar, Clock, AlertCircle, CheckCircle, XCircle,
+  Download, RefreshCw, Filter, ChevronRight, Plus,
+  Wallet, Heart, Building2, Target, Award, PieChart,
+  BarChart3, TrendingDown, Eye, Edit, Settings2,
+  Maximize2, Minimize2, Move, X, ChevronUp, ChevronDown
+} from 'lucide-react'
+import {
+  LineChart, Line, AreaChart, Area, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart as RePieChart, Pie, Cell, RadialBarChart, RadialBar,
+  ComposedChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, 
+  PolarRadiusAxis, Radar, Scatter, ScatterChart
+} from 'recharts'
+
+// Widget Types
+type WidgetType = 'stats' | 'chart' | 'list' | 'calendar' | 'progress' | 'map' | 'custom'
+type ChartType = 'line' | 'area' | 'bar' | 'pie' | 'radial' | 'radar' | 'composed'
+
+interface Widget {
+  id: string
+  type: WidgetType
+  title: string
+  size: 'small' | 'medium' | 'large' | 'full'
+  position: { x: number; y: number }
+  data?: any
+  config?: any
+  refreshInterval?: number
+  isVisible: boolean
+  isMaximized?: boolean
+}
+
+// Sample Data
+const generateChartData = () => {
+  const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+  return months.slice(0, 6).map(month => ({
+    month,
+    gelir: Math.floor(Math.random() * 50000) + 50000,
+    gider: Math.floor(Math.random() * 40000) + 30000,
+    bağış: Math.floor(Math.random() * 20000) + 10000,
+    proje: Math.floor(Math.random() * 15000) + 5000
+  }))
+}
+
+const pieData = [
+  { name: 'Eğitim', value: 35, color: '#3b82f6' },
+  { name: 'Sağlık', value: 25, color: '#10b981' },
+  { name: 'Yardım', value: 20, color: '#f59e0b' },
+  { name: 'Altyapı', value: 15, color: '#8b5cf6' },
+  { name: 'Diğer', value: 5, color: '#ef4444' }
+]
+
+const radarData = [
+  { category: 'Proje Yönetimi', value: 85 },
+  { category: 'Bütçe Kontrolü', value: 92 },
+  { category: 'İnsan Kaynakları', value: 78 },
+  { category: 'Operasyon', value: 88 },
+  { category: 'Raporlama', value: 95 },
+  { category: 'İletişim', value: 82 }
+]
+
+export default function DashboardPage() {
+  const [widgets, setWidgets] = useState<Widget[]>([
+    {
+      id: 'stats-1',
+      type: 'stats',
+      title: 'Gelir/Gider Özeti',
+      size: 'large',
+      position: { x: 0, y: 0 },
+      isVisible: true,
+      data: {
+        stats: [
+          { label: 'Toplam Gelir', value: '₺780,000', change: 12.5, trend: 'up', icon: DollarSign, color: 'green' },
+          { label: 'Toplam Gider', value: '₺520,000', change: 8.3, trend: 'down', icon: TrendingDown, color: 'red' },
+          { label: 'Net Bakiye', value: '₺260,000', change: 15.7, trend: 'up', icon: Wallet, color: 'blue' },
+          { label: 'Aktif Projeler', value: '24', change: 2, trend: 'up', icon: FolderOpen, color: 'purple' }
+        ]
+      }
+    },
+    {
+      id: 'chart-1',
+      type: 'chart',
+      title: 'Finansal Akış',
+      size: 'large',
+      position: { x: 1, y: 0 },
+      isVisible: true,
+      config: { chartType: 'area' },
+      data: generateChartData()
+    },
+    {
+      id: 'chart-2',
+      type: 'chart',
+      title: 'Proje Dağılımı',
+      size: 'medium',
+      position: { x: 0, y: 1 },
+      isVisible: true,
+      config: { chartType: 'pie' },
+      data: pieData
+    },
+    {
+      id: 'chart-3',
+      type: 'chart',
+      title: 'Performans Metrikleri',
+      size: 'medium',
+      position: { x: 1, y: 1 },
+      isVisible: true,
+      config: { chartType: 'radar' },
+      data: radarData
+    }
+  ])
+
+  const [selectedWidget, setSelectedWidget] = useState<string | null>(null)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [showWidgetLibrary, setShowWidgetLibrary] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [chartData, setChartData] = useState(generateChartData())
+
+  // Auto-refresh data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setChartData(generateChartData())
+    }, 30000) // Her 30 saniyede bir güncelle
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    setTimeout(() => {
+      setChartData(generateChartData())
+      setRefreshing(false)
+    }, 1000)
+  }
+
+  const toggleWidgetVisibility = (widgetId: string) => {
+    setWidgets(prev => prev.map(w => 
+      w.id === widgetId ? { ...w, isVisible: !w.isVisible } : w
+    ))
+  }
+
+  const toggleMaximize = (widgetId: string) => {
+    setWidgets(prev => prev.map(w => 
+      w.id === widgetId ? { ...w, isMaximized: !w.isMaximized } : w
+    ))
+  }
+
+  const removeWidget = (widgetId: string) => {
+    setWidgets(prev => prev.filter(w => w.id !== widgetId))
+  }
+
+  // Widget Component
+  const Widget = ({ widget }: { widget: Widget }) => {
+    const [isDragging, setIsDragging] = useState(false)
+
+    const containerClass = `
+      ${widget.size === 'small' ? 'col-span-1' : ''}
+      ${widget.size === 'medium' ? 'col-span-2' : ''}
+      ${widget.size === 'large' ? 'col-span-3' : ''}
+      ${widget.size === 'full' ? 'col-span-4' : ''}
+      ${widget.isMaximized ? 'fixed inset-4 z-50' : ''}
+    `
+
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        whileHover={isEditMode ? { scale: 1.02 } : {}}
+        className={`${containerClass} bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden group`}
+      >
+        {/* Widget Header */}
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{widget.title}</h3>
+          <div className="flex items-center gap-1">
+            {isEditMode && (
+              <>
+                <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Move className="w-4 h-4 text-gray-500" />
+                </button>
+              </>
+            )}
+            <button 
+              onClick={() => toggleMaximize(widget.id)}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+            >
+              {widget.isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+            {isEditMode && (
+              <button 
+                onClick={() => removeWidget(widget.id)}
+                className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded text-red-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Widget Content */}
+        <div className="p-4">
+          {widget.type === 'stats' && widget.data?.stats && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {widget.data.stats.map((stat: any, index: number) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative"
+                >
+                  <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <stat.icon className={`w-5 h-5 text-${stat.color}-500`} />
+                      <span className={`text-xs flex items-center gap-1 ${
+                        stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {stat.trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                        {stat.change}%
+                      </span>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.label}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {widget.type === 'chart' && (
+            <div className="h-64">
+              {widget.config?.chartType === 'area' && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={widget.data || chartData}>
+                    <defs>
+                      <linearGradient id="colorGelir" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorGider" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="month" stroke="#6b7280" />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="gelir" stroke="#3b82f6" fillOpacity={1} fill="url(#colorGelir)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="gider" stroke="#ef4444" fillOpacity={1} fill="url(#colorGider)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+
+              {widget.config?.chartType === 'pie' && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RePieChart>
+                    <Pie
+                      data={widget.data}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {widget.data.map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </RePieChart>
+                </ResponsiveContainer>
+              )}
+
+              {widget.config?.chartType === 'radar' && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={widget.data}>
+                    <PolarGrid strokeDasharray="3 3" />
+                    <PolarAngleAxis dataKey="category" />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                    <Radar name="Performans" dataKey="value" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
+                    <Tooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    )
+  }
+
+  // Recent Activities
+  const activities = [
+    { id: 1, icon: CheckCircle, text: 'Yeni proje onaylandı: Su Kuyusu Projesi', time: '2 saat önce', type: 'success' },
+    { id: 2, icon: Users, text: '5 yeni personel sisteme eklendi', time: '5 saat önce', type: 'info' },
+    { id: 3, icon: AlertCircle, text: 'Bütçe limiti uyarısı: %85 kullanıldı', time: '1 gün önce', type: 'warning' },
+    { id: 4, icon: Heart, text: '12 yeni kurban bağışı alındı', time: '2 gün önce', type: 'success' },
+    { id: 5, icon: Building2, text: 'Senegal tesisi faaliyete geçti', time: '3 gün önce', type: 'info' }
+  ]
+
+  // Quick Actions
+  const quickActions = [
+    { icon: Plus, label: 'Gelir Ekle', href: '/cash/income', color: 'green' },
+    { icon: FolderOpen, label: 'Yeni Proje', href: '/projects/new', color: 'blue' },
+    { icon: Users, label: 'Personel Ekle', href: '/personnel/new', color: 'purple' },
+    { icon: Heart, label: 'Kurban Ekle', href: '/sacrifice/new', color: 'red' }
+  ]
+
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Hoş geldiniz! İşte güncel durumunuz.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowWidgetLibrary(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Widget Ekle
+          </button>
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+              isEditMode 
+                ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            <Settings2 className="w-4 h-4" />
+            {isEditMode ? 'Düzenlemeyi Bitir' : 'Düzenle'}
+          </button>
+          <button
+            onClick={handleRefresh}
+            className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {quickActions.map((action, index) => (
+          <motion.a
+            key={index}
+            href={action.href}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition-all hover:scale-105 border border-gray-200 dark:border-gray-700"
+          >
+            <div className={`w-12 h-12 bg-${action.color}-100 dark:bg-${action.color}-900/20 rounded-lg flex items-center justify-center mb-3`}>
+              <action.icon className={`w-6 h-6 text-${action.color}-600`} />
+            </div>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{action.label}</p>
+          </motion.a>
+        ))}
+      </div>
+
+      {/* Main Dashboard Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <AnimatePresence>
+          {widgets.filter(w => w.isVisible).map((widget) => (
+            <Widget key={widget.id} widget={widget} />
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* Recent Activities & Upcoming Events */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Activities */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+        >
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Son Aktiviteler</h3>
+            <Activity className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="p-4 space-y-3">
+            {activities.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors">
+                <div className={`p-2 rounded-lg ${
+                  activity.type === 'success' ? 'bg-green-100 text-green-600' :
+                  activity.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
+                  'bg-blue-100 text-blue-600'
+                }`}>
+                  <activity.icon className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.text}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+              Tümünü Gör <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Upcoming Events */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+        >
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Yaklaşan Etkinlikler</h3>
+            <Calendar className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="flex-shrink-0">
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Eki</p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">20</p>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Kurban Kesim Başlangıcı</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">09:00 - Tüm tesislerde</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors">
+              <div className="flex-shrink-0">
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Eki</p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">25</p>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Proje Değerlendirme Toplantısı</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">14:00 - Online</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors">
+              <div className="flex-shrink-0">
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Kas</p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">01</p>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Aylık Performans Raporu</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Son teslim tarihi
+# Dashboard dosyasının devamı - upgrade-2-modern-dashboard.sh'nin sonuna ekleyin
+
+                <p className="text-xs text-gray-500 dark:text-gray-400">Son teslim tarihi</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+              Takvime Git <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Widget Library Modal */}
+      <AnimatePresence>
+        {showWidgetLibrary && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowWidgetLibrary(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Widget Kütüphanesi</h2>
+                  <button
+                    onClick={() => setShowWidgetLibrary(false)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Widget Templates */}
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <BarChart3 className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+                      <h3 className="font-medium">Gelir/Gider Grafiği</h3>
+                      <p className="text-sm text-gray-500 mt-1">Aylık finansal akış</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <PieChart className="w-8 h-8 mx-auto mb-2 text-green-500" />
+                      <h3 className="font-medium">Proje Dağılımı</h3>
+                      <p className="text-sm text-gray-500 mt-1">Kategorilere göre projeler</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <Users className="w-8 h-8 mx-auto mb-2 text-purple-500" />
+                      <h3 className="font-medium">Personel İstatistikleri</h3>
+                      <p className="text-sm text-gray-500 mt-1">Departman bazlı dağılım</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <Target className="w-8 h-8 mx-auto mb-2 text-orange-500" />
+                      <h3 className="font-medium">KPI Göstergeleri</h3>
+                      <p className="text-sm text-gray-500 mt-1">Hedef takip sistemi</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <Heart className="w-8 h-8 mx-auto mb-2 text-red-500" />
+                      <h3 className="font-medium">Kurban Takibi</h3>
+                      <p className="text-sm text-gray-500 mt-1">Hisse durumu özeti</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-indigo-500 cursor-pointer transition-colors">
+                    <div className="text-center">
+                      <Activity className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
+                      <h3 className="font-medium">Canlı Aktivite</h3>
+                      <p className="text-sm text-gray-500 mt-1">Gerçek zamanlı işlemler</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}

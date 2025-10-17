@@ -1,3 +1,16 @@
+#!/bin/bash
+# upgrade-4-projects-optimized.sh
+# Projects Management - Optimized Version
+# Date: 2025-10-17 14:52:04
+# User: ongassamaniger-blip
+
+echo "📂 =========================================="
+echo "   PROJE YÖNETİMİ - OPTIMIZED"
+echo "   Kanban, Gantt, Dashboard..."
+echo "📂 =========================================="
+
+# Projects page
+cat > "app/(main)/projects/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -306,3 +319,7 @@ export default function ProjectsPage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Proje Yönetimi tamamlandı!"
+echo "📌 Kurban modülüne geçiliyor..."

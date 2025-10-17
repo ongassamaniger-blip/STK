@@ -1,3 +1,20 @@
+#!/bin/bash
+# upgrade-2a-dashboard-base.sh
+# Modern Dashboard Part 1 - Base Structure
+# Date: 2025-10-17 14:42:16
+# User: ongassamaniger-blip
+
+echo "📊 =========================================="
+echo "   MODERN DASHBOARD UPGRADE - PART 1"
+echo "   Temel yapı oluşturuluyor..."
+echo "📊 =========================================="
+
+# Backup
+echo "📦 Backup alınıyor..."
+cp "app/(main)/dashboard/page.tsx" "app/(main)/dashboard/page.tsx.backup" 2>/dev/null || true
+
+# Dashboard Base Component
+cat > "app/(main)/dashboard/page.tsx" << 'EOF'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -350,3 +367,24 @@ export default function DashboardPage() {
     </div>
   )
 }
+EOF
+
+# Recharts yükle
+echo ""
+echo "📦 Recharts yükleniyor..."
+npm install recharts
+
+echo ""
+echo "✅ Modern Dashboard (Part 1) başarıyla güncellendi!"
+echo ""
+echo "🎯 Eklenen özellikler:"
+echo "  ✓ İstatistik kartları"
+echo "  ✓ Hızlı eylemler"
+echo "  ✓ Gelir/Gider grafiği"
+echo "  ✓ Proje dağılım grafiği"
+echo "  ✓ Son aktiviteler"
+echo "  ✓ Yaklaşan etkinlikler"
+echo "  ✓ Dark mode desteği"
+echo ""
+echo "🚀 Test edin: npm run dev"
+echo "📌 Dashboard çalışıyorsa Part 2'ye geçebiliriz (Widget sistemi)"
