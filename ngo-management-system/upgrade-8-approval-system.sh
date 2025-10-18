@@ -1,3 +1,19 @@
+#!/bin/bash
+# upgrade-8-approval-system.sh
+# Approval System Module
+# Date: 2025-10-18 10:53:00
+# User: ongassamaniger-blip
+
+echo "✅ =========================================="
+echo "   ONAY SİSTEMİ MODÜLÜ"
+echo "   Multi-level approval, workflow, escalation..."
+echo "✅ =========================================="
+
+# Approvals klasörü oluştur
+mkdir -p "app/(main)/approvals"
+
+# Approval System Page
+cat > "app/(main)/approvals/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -746,3 +762,19 @@ export default function ApprovalsPage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Onay Sistemi modülü tamamlandı!"
+echo ""
+echo "🎯 Eklenen özellikler:"
+echo "  ✓ Multi-level approval workflow"
+echo "  ✓ Otomatik escalation"
+echo "  ✓ Onay geçmişi"
+echo "  ✓ Priority yönetimi"
+echo "  ✓ Süre takibi"
+echo "  ✓ Yorum sistemi"
+echo "  ✓ Belge ekleme"
+echo "  ✓ Grafik ve istatistikler"
+echo ""
+echo "📌 Test için: npm run dev"
+echo "📌 Son 2 modül kaldı: Reports ve Settings"
