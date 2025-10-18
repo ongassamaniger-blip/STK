@@ -1,3 +1,19 @@
+#!/bin/bash
+# upgrade-7-personnel-management.sh
+# Personnel Management Module
+# Date: 2025-10-18 10:47:00
+# User: ongassamaniger-blip
+
+echo "👥 =========================================="
+echo "   PERSONEL YÖNETİMİ MODÜLÜ"
+echo "   Maaş, izin, performans, belge yönetimi..."
+echo "👥 =========================================="
+
+# Personnel klasörü oluştur
+mkdir -p "app/(main)/personnel"
+
+# Personnel Management Page
+cat > "app/(main)/personnel/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -726,3 +742,18 @@ export default function PersonnelPage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Personel Yönetimi modülü tamamlandı!"
+echo ""
+echo "🎯 Eklenen özellikler:"
+echo "  ✓ Personel listesi ve detayları"
+echo "  ✓ İzin takibi"
+echo "  ✓ Maaş yönetimi"
+echo "  ✓ Performans değerlendirme"
+echo "  ✓ Departman dağılımı"
+echo "  ✓ Acil durum iletişim bilgileri"
+echo "  ✓ Belge yönetimi"
+echo ""
+echo "📌 Test için: npm run dev"
+echo "📌 Sonraki modül: Onay Sistemi"

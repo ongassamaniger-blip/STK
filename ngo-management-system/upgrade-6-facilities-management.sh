@@ -1,3 +1,19 @@
+#!/bin/bash
+# upgrade-6-facilities-management.sh
+# Facilities Management Module
+# Date: 2025-10-18 10:39:27
+# User: ongassamaniger-blip
+
+echo "🏢 =========================================="
+echo "   TESİS YÖNETİMİ MODÜLÜ"
+echo "   Tesis dashboard, personel, kasa yönetimi..."
+echo "🏢 =========================================="
+
+# Facilities klasörü oluştur
+mkdir -p "app/(main)/facilities"
+
+# Facilities Management Page
+cat > "app/(main)/facilities/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -588,3 +604,18 @@ export default function FacilitiesPage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Tesis Yönetimi modülü tamamlandı!"
+echo ""
+echo "🎯 Eklenen özellikler:"
+echo "  ✓ Tesis listesi (Grid/List/Map view)"
+echo "  ✓ Tesis dashboard"
+echo "  ✓ Bütçe takibi"
+echo "  ✓ Personel yönetimi"
+echo "  ✓ Proje takibi"
+echo "  ✓ Kapasite yönetimi"
+echo "  ✓ Detaylı istatistikler"
+echo ""
+echo "📌 Test için: npm run dev"
+echo "📌 Sonraki modül: Personel Yönetimi"
