@@ -1,0 +1,24 @@
+NGO SYSTEM - QUICK START
+========================
+
+TEST LOGIN:
+- URL: http://localhost:3000
+- Email: admin@ngo.org
+- Password: admin123
+
+COMMANDS:
+- npm run dev (start server)
+- npm run build (production)
+
+COMPLETED PAGES:
+/dashboard
+/cash
+/projects
+/sacrifice
+
+TODO PAGES:
+/facilities
+/personnel
+/approvals
+/reports
+/settings
