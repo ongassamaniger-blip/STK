@@ -1,3 +1,19 @@
+#!/bin/bash
+# upgrade-9-reports-module.sh
+# Reports Module with Custom Templates
+# Date: 2025-10-18 10:56:42
+# User: ongassamaniger-blip
+
+echo "📊 =========================================="
+echo "   RAPORLAMA MODÜLÜ"
+echo "   Custom reports, templates, scheduled reports..."
+echo "📊 =========================================="
+
+# Reports klasörü oluştur
+mkdir -p "app/(main)/reports"
+
+# Reports Module Page
+cat > "app/(main)/reports/page.tsx" << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -687,3 +703,18 @@ export default function ReportsPage() {
     </div>
   )
 }
+EOF
+
+echo "✅ Raporlama modülü tamamlandı!"
+echo ""
+echo "🎯 Eklenen özellikler:"
+echo "  ✓ Custom report templates"
+echo "  ✓ Scheduled reports"
+echo "  ✓ Multiple export formats (PDF, Excel, CSV)"
+echo "  ✓ Report analytics"
+echo "  ✓ Email integration"
+echo "  ✓ Report parameters"
+echo "  ✓ Recent activity tracking"
+echo ""
+echo "📌 Test için: npm run dev"
+echo "📌 SON MODÜL: Settings (Ayarlar)"
