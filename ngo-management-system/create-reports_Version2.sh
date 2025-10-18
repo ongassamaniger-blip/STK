@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Reports sayfası
+cat > app/\(main\)/reports/page.tsx << 'EOF'
 'use client';
 
 import { useState } from 'react';
@@ -177,3 +181,6 @@ export default function ReportsPage() {
     </div>
   );
 }
+EOF
+
+echo "✅ Reports sayfası oluşturuldu!"

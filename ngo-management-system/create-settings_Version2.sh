@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Settings sayfası
+cat > app/\(main\)/settings/page.tsx << 'EOF'
 'use client';
 
 import { useState } from 'react';
@@ -327,3 +331,6 @@ export default function SettingsPage() {
     </div>
   );
 }
+EOF
+
+echo "✅ Settings sayfası oluşturuldu!"

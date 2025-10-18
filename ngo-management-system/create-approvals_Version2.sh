@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Approvals sayfası
+cat > app/\(main\)/approvals/page.tsx << 'EOF'
 'use client';
 
 import { useState } from 'react';
@@ -248,3 +252,6 @@ export default function ApprovalsPage() {
     </div>
   );
 }
+EOF
+
+echo "✅ Approvals sayfası oluşturuldu!"

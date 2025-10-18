@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Facilities ana sayfa - Part 1
+cat > app/\(main\)/facilities/page.tsx << 'EOF'
 'use client';
 
 import { useState } from 'react';
@@ -175,3 +179,6 @@ export default function FacilitiesPage() {
     </div>
   );
 }
+EOF
+
+echo "✅ Facilities sayfası oluşturuldu!"

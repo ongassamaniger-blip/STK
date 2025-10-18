@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Personnel Management sayfası
+cat > app/\(main\)/personnel/page.tsx << 'EOF'
 'use client';
 
 import { useState } from 'react';
@@ -180,3 +184,6 @@ export default function PersonnelPage() {
     </div>
   );
 }
+EOF
+
+echo "✅ Personnel sayfası oluşturuldu!"
